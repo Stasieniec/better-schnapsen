@@ -4,7 +4,7 @@ tree."""
 import random
 from typing import Optional
 
-from ..game import Bot, Move, PartialTrick, PlayerGameState
+from ..game import Bot, Move, PartialTrick, GameState
 
 
 class MiniMaxBot(Bot):
@@ -15,7 +15,7 @@ class MiniMaxBot(Bot):
         self.rng = random.Random(self.seed)
 
     def get_move(
-        self, state: PlayerGameState, leader_move: Optional[PartialTrick]
+        self, state: GameState, leader_move: Optional[PartialTrick]
     ) -> Move:
         try:
             state.get_opponent_hand_in_phase_two()
