@@ -15,6 +15,7 @@ class SchnapsenEnv(gym.Env):
 
 		#SCHNAPSEN ENGINE:
 		self.egine = SchnapsenGamePlayEngine
+		self.bot = TrainingBot()
 		#ENVIRONMENTAL SHIT:
 		self.action_space = spaces.Discrete(5)
 		# Example for using image as input (channel-first; channel-last also works):
@@ -22,15 +23,13 @@ class SchnapsenEnv(gym.Env):
 											shape=(N_CHANNELS, HEIGHT, WIDTH), dtype=np.uint8)
 
 
-	def step(self):
-		self.engine.
+	def step(self, action):
+
 		pass
 
 	def reset(self, opponent: Bot):
 		self.engine = SchnapsenGamePlayEngine
-		self.engine.play_game(opponent, TrainingBot)
-		game = self.engine.play_game()
-		self.engine.
+		self.engine.play_game(opponent, self.bot)
 
 	def render(self, mode='human'):
 		pass
@@ -41,11 +40,15 @@ class SchnapsenEnv(gym.Env):
 class TrainingBot(Bot):
 	def __init__(self, seed: int) -> None:
 		self.rng = random.Random(self.seed)
+		self.ready = False
 		
 	def get_move(self, state: PlayerPerspective, leader_move: Optional[Move]) -> Move:
 		moves = state.valid_moves()
+		self.ready = True
 		move = self.rng.choice(list(moves))
 		return move
+
+
 
 	def __repr__(self) -> str:
 		return f"RandBot(seed={self.seed})"
