@@ -6,8 +6,8 @@ from sklearn.linear_model import LogisticRegression
 import joblib
 import os
 import time
-from keras.layers import Input, LSTM, Dense
-from keras.models import Model
+from keras.layers import Input, LSTM, Dense, Reshape
+from keras.models import Model, Sequential
 
 
 
@@ -186,19 +186,12 @@ def train_ML_model(replay_memory_filename: str = 'test_replay_memory',
         # needs a bigger dataset, but if you find the correct combination of neurons and neural layers and provide a big enough training dataset can lead to better performance
 
         # one layer of 30 neurons
-        inputs = Input(shape=(20, 173)) # where max_len is the maximum number of moves in a game and num_features is the number of features of each move
-
-        # Define the RNN layer
-        rnn_layer = LSTM(64)(inputs)
-
-        # Define the DQN layer
-        dqn_layer = Dense(64, activation='relu')(rnn_layer)
-
-        # Define the output layer
-        outputs = Dense(1, activation='sigmoid')(dqn_layer)
-
-        # Create the model
-        learner = Model(inputs=inputs, outputs=outputs)
+        learner = Sequential()
+        learner.add(Input(shape=(173, )))
+        learner.add(Reshape((1, 173)))
+        learner.add(LSTM(64))
+        learner.add(Dense(64, activation='relu'))
+        learner.add(Dense(1, activation='sigmoid'))
 
         learner.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 
