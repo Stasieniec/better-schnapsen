@@ -1,0 +1,62 @@
+from sklearn.model_selection import train_test_split
+from keras.layers import LSTM, Input, Dense
+from keras.models import Model
+
+# define the input layer
+
+
+def create_RNN():
+    input_layer = Input(shape=(input_shape,))
+
+    # define the LSTM layer
+    lstm_layer = LSTM(64)(input_layer)
+    # define the output layer
+    output_layer = Dense(output_shape, activation='softmax')(lstm_layer)
+
+    # create the RNN model
+    rnn_model = Model(inputs=input_layer, outputs=output_layer)
+    return rnn_model
+    
+
+def create_DQN():
+    # define the input layer
+    input_layer = Input(shape=(input_shape,))
+
+    # define the hidden layers
+    hidden_layer_1 = Dense(64, activation='relu')(input_layer)
+    hidden_layer_2 = Dense(64, activation='relu')(hidden_layer_1)
+
+    # define the output layer
+    output_layer = Dense(output_shape, activation='linear')(hidden_layer_2)
+
+    # create the DQN model
+    dqn_model = Model(inputs=input_layer, outputs=output_layer)
+    return dqn_model
+
+
+
+def combine(rnn_model: Model, dqn_model: Model) -> Model:
+
+        # compile the RNN model
+    rnn_model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+        # compile the DQN model
+    dqn_model.compile(optimizer='adam', loss='mean_squared_error', metrics=['accuracy'])
+
+
+    # First, you need to split the data into training and test sets
+    X_train, X_test, y_train, y_test = train_test_split(data, labels, test_size=0.2, random_state=42)
+
+    # Train the RNN model
+    rnn_model.fit(X_train, y_train, epochs=10, batch_size=32, validation_data=(X_test, y_test))
+    # Train the DQN model
+    dqn_model.fit(X_train, y_train, epochs=10, batch_size=32, validation_data=(X_test, y_test))
+
+    # Finally, you can combine the RNN and DQN models
+    input_layer = Input(shape=(input_shape,))
+    rnn_output = rnn_model(input_layer)
+    dqn_output = dqn_model(rnn_output)
+    combined_model = Model(inputs=input_layer, outputs=dqn_output)
+    combined_model.compile(optimizer='adam', loss='mean_squared_error', metrics=['accuracy'])
+
+    # And train the combined model
+    combined_model.fit(X_train, y_train, epochs=10, batch_size=32, validation_data=(X_test, y_test))

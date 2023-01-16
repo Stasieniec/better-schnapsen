@@ -1,4 +1,5 @@
 import gym
+import random
 from gym import spaces
 from schnapsen.game import (Bot, Move, PlayerPerspective,
                             SchnapsenGamePlayEngine, Trump_Exchange)
@@ -14,8 +15,8 @@ class SchnapsenEnv(gym.Env):
 		super(SchnapsenEnv, self).__init__()
 
 		#SCHNAPSEN ENGINE:
-		self.egine = SchnapsenGamePlayEngine
-		self.bot = TrainingBot()
+		self.engine = SchnapsenGamePlayEngine
+		self.bot = Dummy()
 		#ENVIRONMENTAL SHIT:
 		self.action_space = spaces.Discrete(5)
 		# Example for using image as input (channel-first; channel-last also works):
@@ -24,31 +25,50 @@ class SchnapsenEnv(gym.Env):
 
 
 	def step(self, action):
+		observations = self.bot.observations
+		move = observations[action]
+		self.bot.
+		return observations, self.reward, self.done
 
-		pass
+
 
 	def reset(self, opponent: Bot):
 		self.engine = SchnapsenGamePlayEngine
+		self.bot = Dummy
 		self.engine.play_game(opponent, self.bot)
+
+
 
 	def render(self, mode='human'):
 		pass
+
+
 	def close (self):
 		pass
 
 
-class TrainingBot(Bot):
-	def __init__(self, seed: int) -> None:
-		self.rng = random.Random(self.seed)
-		self.ready = False
+class Dummy(Bot):
+
+	def __init__(self) -> None:
+		self.rng = random.Random()
+		self.step_was_made = False
+		self.curr_move: Move = None
+
+
+		self.observations = []
 		
 	def get_move(self, state: PlayerPerspective, leader_move: Optional[Move]) -> Move:
-		moves = state.valid_moves()
-		self.ready = True
-		move = self.rng.choice(list(moves))
-		return move
-
+		self.observations = [state.valid_moves]
+		while not self.step_was_made:
+			Wait = True
+		return self.curr_move
+		
 
 
 	def __repr__(self) -> str:
 		return f"RandBot(seed={self.seed})"
+
+
+
+
+model.learn(SchnapsenEnv)
