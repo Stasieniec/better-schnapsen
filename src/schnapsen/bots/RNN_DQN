@@ -1,24 +1,41 @@
 from sklearn.model_selection import train_test_split
-from keras.layers import LSTM, Input, Dense
-from keras.models import Model
+import tensorflow as tf
+from tensorflow import keras
+from keras import layers
+from keras.models import Model, Sequential
+from keras.layers import Dense, Input, LSTM, Activation
+
 
 # define the input layer
 
 
+
+
+
 def create_RNN():
-    input_layer = Input(shape=(input_shape,))
+    rnn = Sequential([
+        Input(shape=(input_shape,)),
+        LSTM(64),
+        Dense(output_shape, activation='softmax')(lstm_layer)]
+    )
 
-    # define the LSTM layer
-    lstm_layer = LSTM(64)(input_layer)
-    # define the output layer
-    output_layer = Dense(output_shape, activation='softmax')(lstm_layer)
+    return rnn
 
-    # create the RNN model
-    rnn_model = Model(inputs=input_layer, outputs=output_layer)
-    return rnn_model
-    
+
+def train_rnn():
+    rnn = create_RNN
+    rnn.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+
+
+
+
+
+
+
+
 
 def create_DQN():
+
     # define the input layer
     input_layer = Input(shape=(input_shape,))
 
@@ -51,7 +68,7 @@ def combine(rnn_model: Model, dqn_model: Model) -> Model:
     # Train the DQN model
     dqn_model.fit(X_train, y_train, epochs=10, batch_size=32, validation_data=(X_test, y_test))
 
-    # Finally, you can combine the RNN and DQN models
+    # Combine the RNN and DQN models
     input_layer = Input(shape=(input_shape,))
     rnn_output = rnn_model(input_layer)
     dqn_output = dqn_model(rnn_output)
