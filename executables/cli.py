@@ -96,7 +96,7 @@ def ml() -> None:
 @ml.command()
 def create_replay_memory_dataset() -> None:
     # define replay memory database creation parameters
-    num_of_games: int = 10000
+    num_of_games: int = 2
     replay_memory_dir: str = 'ML_replay_memories'
     replay_memory_filename: str = 'random_random_10k_games.txt'
     bot_1_behaviour: Bot = RandBot(5234243)
@@ -137,7 +137,7 @@ def train_model() -> None:
     # Tips: a neural network usually requires bigger datasets to be trained on, and to play with the parameters of the model.
     # Feel free to play with the hyperparameters of the model in file 'ml_bot.py', function 'train_ML_model',
     # under the code of body of the if statement 'if use_neural_network:'
-    use_neural_network: bool = False
+    use_neural_network: bool = True
     model_name: str = 'simple_model'
     model_dir: str = "ML_models"
     overwrite: bool = False

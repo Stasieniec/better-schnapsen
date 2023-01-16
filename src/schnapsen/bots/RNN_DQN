@@ -16,7 +16,7 @@ def create_RNN():
     rnn = Sequential([
         Input(shape=(input_shape,)),
         LSTM(64),
-        Dense(output_shape, activation='softmax')(lstm_layer)]
+        Dense(5, activation='softmax')]
     )
 
     return rnn
@@ -25,6 +25,12 @@ def create_RNN():
 def train_rnn():
     rnn = create_RNN
     rnn.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+
+
+    X_train, X_test, y_train, y_test = train_test_split(data, labels, test_size=0.2, random_state=42)
+
+    rnn.fit(X_train, y_train, epochs=10, batch_size=32, validation_data=(X_test, y_test))
+
 
 
 

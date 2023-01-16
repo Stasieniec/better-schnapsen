@@ -6,9 +6,6 @@ from sklearn.linear_model import LogisticRegression
 import joblib
 import os
 import time
-from keras.layers import Input, LSTM, Dense
-from keras.models import Model
-
 
 
 class MLPlayingBot(Bot):
@@ -124,15 +121,13 @@ class MLDataBot(Bot):
             with open(file=self.replay_memory_file_path, mode="a") as replay_memory_file:
                 # replay_memory_line: List[Tuple[list, number]] = [state_actions_representation, won_label]
                 # writing to replay memory file in the form "[feature list] || int(won_label)]
-                print(f"STATE ACTIONS NUMBER: {len(state_actions_representation)}")
-                print(f"STATE ACTIONS: {state_actions_representation}")
                 replay_memory_file.write(f"{str(state_actions_representation)[1:-1]} || {int(won_label)}\n")
 
 
 def train_ML_model(replay_memory_filename: str = 'test_replay_memory',
                    replay_memories_directory: str = 'ML_replay_memories',
                    model_name: str = 'test_model', model_dir: str = "ML_models",
-                   use_neural_network: bool = True, overwrite: bool = True) -> None:
+                   use_neural_network: bool = False, overwrite: bool = True) -> None:
     # check if directory exists, and if not, then create it
     if not os.path.exists(model_dir):
         os.mkdir(model_dir)
@@ -186,22 +181,21 @@ def train_ML_model(replay_memory_filename: str = 'test_replay_memory',
         # needs a bigger dataset, but if you find the correct combination of neurons and neural layers and provide a big enough training dataset can lead to better performance
 
         # one layer of 30 neurons
-        inputs = Input(shape=(20, 173)) # where max_len is the maximum number of moves in a game and num_features is the number of features of each move
+        hidden_layer_sizes = (30)
+        # two layers of 30 and 5 neurons respectively
+        # hidden_layer_sizes = (30, 5)
 
-        # Define the RNN layer
-        rnn_layer = LSTM(64)(inputs)
+        # The learning rate determines how fast we move towards the optimal solution.
+        # A low learning rate will converge slowly, but a large one might overshoot.
+        learning_rate = 0.0001
 
-        # Define the DQN layer
-        dqn_layer = Dense(64, activation='relu')(rnn_layer)
+        # The regularization term aims to prevent over-fitting, and we can tweak its strength here.
+        regularization_strength = 0.0001
 
-        # Define the output layer
-        outputs = Dense(1, activation='sigmoid')(dqn_layer)
-
-        # Create the model
-        learner = Model(inputs=inputs, outputs=outputs)
-
-        learner.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
-
+        # Train a neural network
+        learner = MLPClassifier(hidden_layer_sizes=hidden_layer_sizes, learning_rate_init=learning_rate,
+                                alpha=regularization_strength, verbose=True, early_stopping=True, n_iter_no_change=6,
+                                activation='tanh')
     else:
         # Train a simpler Linear Logistic Regression model
         # learn more about the model or how to use better use it by checking out its documentation
@@ -214,7 +208,7 @@ def train_ML_model(replay_memory_filename: str = 'test_replay_memory',
     start = time.time()
     print("Starting training phase...")
 
-    model = learner.fit(data, targets, batch_size=32, epochs=10)
+    model = learner.fit(data, targets)
     # Save the model in a file
     joblib.dump(model, model_file_path)
     end = time.time()
