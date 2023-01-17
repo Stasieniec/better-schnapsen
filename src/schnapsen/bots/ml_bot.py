@@ -6,6 +6,7 @@ from sklearn.linear_model import LogisticRegression
 import joblib
 import os
 import time
+from tensorflow import keras
 from keras.layers import Input, LSTM, Dense, Reshape
 from keras.models import Model, Sequential
 
@@ -16,13 +17,13 @@ class MLPlayingBot(Bot):
     This class loads a trained ML model and uses it to play
     """
 
-    def __init__(self, model_name: str = 'test_model', model_dir: str = "ML_models") -> None:
+    def __init__(self, model_name: str = 'simple_model', model_dir: str = "ML_models") -> None:
         model_file_path = os.path.join(model_dir, model_name)
         if not os.path.exists(model_file_path):
             raise ValueError("Model could not be found at: " + model_file_path)
         else:
             # load model
-            self.__model = joblib.load(model_file_path)
+            self.__model = keras.models.load_model(model_file_path)
 
     def get_move(self, player_perspective: PlayerPerspective, leader_move: Optional[Move]) -> Move:
         # get the sate feature representation
@@ -50,8 +51,8 @@ class MLPlayingBot(Bot):
                 action_state_representations.append(
                     state_representation + leader_move_representation + my_move_representation)
 
-        model_output = self.__model.predict_proba(action_state_representations)
-        winning_probabilities_of_moves = [outcome_prob[1] for outcome_prob in model_output]
+        model_output = self.__model.predict(action_state_representations)
+        winning_probabilities_of_moves = [outcome_prob for outcome_prob in model_output]
         highest_value: float = -1
         best_move: Move
         for index, value in enumerate(winning_probabilities_of_moves):
@@ -186,8 +187,8 @@ def train_ML_model(replay_memory_filename: str = 'test_replay_memory',
         # needs a bigger dataset, but if you find the correct combination of neurons and neural layers and provide a big enough training dataset can lead to better performance
 
         # one layer of 30 neurons
-        learner = Sequential()
-        learner.add(Input(shape=(173, )))
+        learner = Sequential() #Creating a sequential model. Sequential = it has sequences of neurons
+        learner.add(Input(shape=(173, ))) #
         learner.add(Reshape((1, 173)))
         learner.add(LSTM(64))
         learner.add(Dense(64, activation='relu'))
@@ -207,9 +208,10 @@ def train_ML_model(replay_memory_filename: str = 'test_replay_memory',
     start = time.time()
     print("Starting training phase...")
 
-    model = learner.fit(data, targets, batch_size=32, epochs=10)
+    learner.fit(data, targets, batch_size=32, epochs=10)
     # Save the model in a file
-    joblib.dump(model, model_file_path)
+    learner.save(model_file_path)
+    #joblib.dump(model, model_file_path)
     end = time.time()
     print('The model was trained in ', (end - start) / 60, 'minutes.')
 

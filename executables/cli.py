@@ -140,7 +140,7 @@ def train_model() -> None:
     use_neural_network: bool = True
     model_name: str = 'simple_model'
     model_dir: str = "ML_models"
-    overwrite: bool = False
+    overwrite: bool = True
 
     train_ML_model(replay_memory_filename=replay_memory_filename, replay_memories_directory=replay_memories_directory,
                    model_name=model_name, model_dir=model_dir, use_neural_network=use_neural_network, overwrite=overwrite)
@@ -153,7 +153,7 @@ def try_bot_game() -> None:
     model_name: str = 'simple_model'
     bot1: Bot = MLPlayingBot(model_name=model_name, model_dir=model_dir)
     bot2: Bot = RandBot(464566)
-    number_of_games: int = 10000
+    number_of_games: int = 10
 
     # play games with altering leader position on first rounds
     ml_bot_wins_against_random = play_games_and_return_stats(engine=engine, provided_bot1=bot1, provided_bot2=bot2, number_of_games=number_of_games)
