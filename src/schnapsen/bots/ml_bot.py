@@ -125,8 +125,6 @@ class MLDataBot(Bot):
             with open(file=self.replay_memory_file_path, mode="a") as replay_memory_file:
                 # replay_memory_line: List[Tuple[list, number]] = [state_actions_representation, won_label]
                 # writing to replay memory file in the form "[feature list] || int(won_label)]
-                print(f"STATE ACTIONS NUMBER: {len(state_actions_representation)}")
-                print(f"STATE ACTIONS: {state_actions_representation}")
                 replay_memory_file.write(f"{str(state_actions_representation)[1:-1]} || {int(won_label)}\n")
 
 
@@ -190,7 +188,8 @@ def train_ML_model(replay_memory_filename: str = 'test_replay_memory',
         learner = Sequential() #Creating a sequential model. Sequential = it has sequences of neurons
         learner.add(Input(shape=(173, ))) #
         learner.add(Reshape((1, 173)))
-        learner.add(LSTM(64))
+        learner.add(LSTM(128))
+        learner.add(Dense(128, activation='relu'))
         learner.add(Dense(64, activation='relu'))
         learner.add(Dense(1, activation='sigmoid'))
 
@@ -208,7 +207,7 @@ def train_ML_model(replay_memory_filename: str = 'test_replay_memory',
     start = time.time()
     print("Starting training phase...")
 
-    learner.fit(data, targets, batch_size=32, epochs=10)
+    learner.fit(data, targets, batch_size=32, epochs=50)
     # Save the model in a file
     learner.save(model_file_path)
     #joblib.dump(model, model_file_path)
