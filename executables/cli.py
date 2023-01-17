@@ -152,9 +152,9 @@ def try_bot_game() -> None:
     model_dir: str = 'ML_models'
     model_name: str = 'simple_model'
     bot1: Bot = MLPlayingBot(model_name=model_name, model_dir=model_dir)
-    bot2: Bot = RandBot(464566)
-    #bot2: Bot = RdeepBot(num_samples=4, depth=5, rand=random.Random(68438))
-    number_of_games: int = 100
+    #bot2: Bot = RandBot(464566)
+    bot2: Bot = RdeepBot(num_samples=4, depth=5, rand=random.Random(68438))
+    number_of_games: int = 20
 
     # play games with altering leader position on first rounds
     ml_bot_wins_against_random = play_games_and_return_stats(engine=engine, provided_bot1=bot1, provided_bot2=bot2, number_of_games=number_of_games)

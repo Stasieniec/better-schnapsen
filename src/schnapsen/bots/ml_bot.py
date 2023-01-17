@@ -7,7 +7,7 @@ import joblib
 import os
 import time
 from tensorflow import keras
-from keras.layers import Input, LSTM, Dense, Reshape
+from keras.layers import Input, LSTM, Dense, Reshape, Flatten
 from keras.models import Model, Sequential
 
 
@@ -188,8 +188,10 @@ def train_ML_model(replay_memory_filename: str = 'test_replay_memory',
         learner = Sequential() #Creating a sequential model. Sequential = it has sequences of neurons
         learner.add(Input(shape=(173, ))) #
         learner.add(Reshape((1, 173)))
-        learner.add(LSTM(128))
+        learner.add(LSTM(173))
+        learner.add(Flatten())
         learner.add(Dense(128, activation='relu'))
+        learner.add(Dense(64, activation='relu'))
         learner.add(Dense(64, activation='relu'))
         learner.add(Dense(1, activation='sigmoid'))
 
@@ -207,7 +209,7 @@ def train_ML_model(replay_memory_filename: str = 'test_replay_memory',
     start = time.time()
     print("Starting training phase...")
 
-    learner.fit(data, targets, batch_size=32, epochs=50)
+    learner.fit(data, targets, batch_size=32, epochs=10)
     # Save the model in a file
     learner.save(model_file_path)
     #joblib.dump(model, model_file_path)
