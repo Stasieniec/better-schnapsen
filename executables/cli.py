@@ -96,13 +96,13 @@ def ml() -> None:
 @ml.command()
 def create_replay_memory_dataset() -> None:
     # define replay memory database creation parameters
-    num_of_games: int = 10000
+    num_of_games: int = 50000
     replay_memory_dir: str = 'ML_replay_memories'
     replay_memory_filename: str = 'random_random_10k_games.txt'
-    #bot_1_behaviour: Bot = RdeepBot()
-    bot_1_behaviour: Bot = RdeepBot(num_samples=4, depth=5, rand=random.Random(4564654644))
-    #bot_2_behaviour: Bot = RdeepBot()
-    bot_2_behaviour: Bot = RdeepBot(num_samples=4, depth=5, rand=random.Random(68438))
+    bot_1_behaviour: Bot = RandBot(45654644)
+    #bot_1_behaviour: Bot = RdeepBot(num_samples=4, depth=5, rand=random.Random(4564654644))
+    bot_2_behaviour: Bot = RandBot(68438)
+    #bot_2_behaviour: Bot = RdeepBot(num_samples=4, depth=5, rand=random.Random(68438))
     random_seed: int = 1
     delete_existing_older_dataset = True
 

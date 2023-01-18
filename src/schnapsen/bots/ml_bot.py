@@ -194,6 +194,7 @@ def train_ML_model(replay_memory_filename: str = 'test_replay_memory',
         learner.add(Dense(128, activation='relu'))
         learner.add(Dense(64, activation='relu'))
         learner.add(Dense(32, activation='relu'))
+        learner.add(Dense(16, activation='relu'))
         learner.add(Dense(1, activation='sigmoid'))
 
         learner.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
@@ -210,7 +211,7 @@ def train_ML_model(replay_memory_filename: str = 'test_replay_memory',
     start = time.time()
     print("Starting training phase...")
 
-    learner.fit(data, targets, batch_size=1, epochs=10)
+    learner.fit(data, targets, batch_size=32, epochs=10)
     # Save the model in a file
     learner.save(model_file_path)
     #joblib.dump(model, model_file_path)
