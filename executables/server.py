@@ -1,6 +1,6 @@
 import random
 from schnapsen.bots import SchnapsenServer
-from schnapsen.bots import RandBot, AlphaBetaBot, RdeepBot
+from schnapsen.bots import RandBot, AlphaBetaBot, RdeepBot, MLPlayingBot
 from schnapsen.game import SchnapsenGamePlayEngine, Bot
 import click
 
@@ -20,6 +20,8 @@ def main(bot: str) -> None:
             bot1 = AlphaBetaBot()
         elif bot.lower() == "rdeepbot":
             bot1 = RdeepBot(num_samples=16, depth=4, rand=random.Random(42))
+        elif bot1.lower() == "mlbot":
+            bot1 = MLPlayingBot()
         else:
             raise NotImplementedError
         bot2 = s.make_gui_bot(name="mybot2")

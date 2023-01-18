@@ -1,10 +1,11 @@
 from typing import Optional
 from schnapsen.game import Bot, PlayerPerspective, Move, GameState, GamePlayEngine
 from random import Random
+import random
 
 
 class RdeepBot(Bot):
-    def __init__(self, num_samples: int, depth: int, rand: Random) -> None:
+    def __init__(self, num_samples, depth, rand: Random) -> None:
         """
         Create a new rdeep bot.
 
